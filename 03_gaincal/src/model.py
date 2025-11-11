@@ -2,12 +2,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 torch.manual_seed(42)
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device = "cpu"
 import falcon
 import wandb
 import functionlistnew as func
-# torch.manual_seed(42)
 
 # Global configuration
 padded = torch.load("/home/jsanghavi1/falcon/telecopelocation/paddedAA2_4_10_9_128.pth")
@@ -163,23 +161,23 @@ class createobsxfromx:
 # compare power spectrum across the output images as a node.
 # Keep ic same and just vary A and n 
 
-import timm
+# import timm
 
-class E(torch.nn.Module):
-    """Embedding network flattening high-dimensional observations per slice with normalization."""
-    def __init__(self, latent_dim=128):
-        super().__init__()
-        base = timm.create_model('resnet50d', pretrained=True, in_chans=4)
-        self.encoder = nn.Sequential(*list(base.children())[:-1])
-        self.projection = nn.Linear(2048, latent_dim)
-        data_cfg = timm.data.resolve_data_config(base.pretrained_cfg)
-        self.transform = timm.data.create_transform(**data_cfg)
+# class E(torch.nn.Module):
+#     """Embedding network flattening high-dimensional observations per slice with normalization."""
+#     def __init__(self, latent_dim=128):
+#         super().__init__()
+#         base = timm.create_model('resnet50d', pretrained=True, in_chans=4)
+#         self.encoder = nn.Sequential(*list(base.children())[:-1])
+#         self.projection = nn.Linear(2048, latent_dim)
+#         data_cfg = timm.data.resolve_data_config(base.pretrained_cfg)
+#         self.transform = timm.data.create_transform(**data_cfg)
 
-    def forward(self, x, *args):
-        x = torch.tensor(x, dtype=torch.float32)
-        h = self.encoder(self.transform(x))
-        compobsx = self.projection(h)
-        return compobsx
+#     def forward(self, x, *args):
+#         x = torch.tensor(x, dtype=torch.float32)
+#         h = self.encoder(self.transform(x))
+#         compobsx = self.projection(h)
+#         return compobsx
 
 # import torch.nn.functional as F
 # import timm
