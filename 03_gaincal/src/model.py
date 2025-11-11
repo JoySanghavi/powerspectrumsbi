@@ -8,7 +8,7 @@ import wandb
 import functionlistnew as func
 
 # Global configuration
-padded = torch.load("/home/jsanghavi1/falcon/telecopelocation/paddedAA2_4_10_9_128.pth")
+padded = torch.load("paddedAA2_4_10_9_128.pth")
 indices1 = torch.arange(1008)
 indices2 = torch.arange(1008, 2016)
 subsetindex = [indices1, indices2]
