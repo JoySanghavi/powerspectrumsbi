@@ -217,7 +217,7 @@ graph:
       # use_best_models_during_inference: true
       # reset_network_after_pause: false
     ray:
-      num_gpus: 1.0
+      num_gpus: 0.0
 
   gains:
     parents: [z]

@@ -6,9 +6,13 @@ device = "cpu"
 import falcon
 import wandb
 import functionlistnew as func
+from pathlib import Path
 
 # Global configuration
-padded = torch.load("paddedAA2_4_10_9_128.pth")
+HERE = Path(__file__).resolve().parent
+padded_path = HERE / "paddedAA2_4_10_9_128.pth"
+padded = torch.load(padded_path)
+# padded = torch.load("paddedAA2_4_10_9_128.pth")
 indices1 = torch.arange(1008)
 indices2 = torch.arange(1008, 2016)
 subsetindex = [indices1, indices2]
@@ -32,7 +36,7 @@ class creategainfromtheta:
     def simulate_batch(self, batch_size, z):
         z = torch.tensor(z, device=device)
         gains = func.thetatogains(z)
-        print("Gains generated")
+        # print("Gains generated")
         return gains.cpu().numpy()
 
 class createuvmapfromgain:
@@ -40,7 +44,7 @@ class createuvmapfromgain:
     def simulate_batch(self, batch_size, gains):
         gains = torch.tensor(gains, device=device)
         stacked_uv = UV_generator(gains)
-        print("UVtrack generated")
+        # print("UVtrack generated")
         return stacked_uv.cpu().numpy()
 
 class createnoiseuvmapfromgain:
@@ -48,7 +52,7 @@ class createnoiseuvmapfromgain:
     def simulate_batch(self, batch_size, gains):
         gains = torch.tensor(gains, device=device)
         noisestacked_uv = UV_generator(gains, mode='square')
-        print("UVtracksquared generated")
+        # print("UVtracksquared generated")
         return noisestacked_uv.cpu().numpy()
 
 class createdffrompw:
@@ -58,7 +62,7 @@ class createdffrompw:
         a = torch.pow(10, pw[:,0])
         n = pw[:,1]
         df = PWSimulator.sample_field(a, n)
-        print("DF generated")
+        # print("DF generated")
         return df.cpu().numpy()
 
 class createbtfromdf:
@@ -66,7 +70,7 @@ class createbtfromdf:
     def simulate_batch(self, batch_size, df):
         df = torch.tensor(df, device=device)
         bt = BT_model(df)
-        print("BT generated")
+        # print("BT generated")
         return bt.cpu().numpy()       
 
 class createimagefrombtandgauss:
@@ -76,7 +80,7 @@ class createimagefrombtandgauss:
         foregroundimage = func.gaussian_2d(size=config.shape, sigma=config.sigma)
         foregroundimage = foregroundimage.unsqueeze(0).expand_as(bt)
         image = bt + config.prefactor * foregroundimage
-        print("Image generated")
+        # print("Image generated")
         return image.cpu().numpy()
 
 class createuvimagefromimage:
@@ -84,7 +88,7 @@ class createuvimagefromimage:
     def simulate_batch(self, batch_size, image):
         image = torch.tensor(image, device=device)
         uvimage = torch.fft.fft2(image, norm="ortho")
-        print("UVimage generated")
+        # print("UVimage generated")
         return uvimage.cpu().numpy()
 
 class Noise:
@@ -92,7 +96,7 @@ class Noise:
     def simulate_batch(self, batch_size, uvimage):
         uvimage = torch.tensor(uvimage, device=device)
         noiseimage = torch.rand_like(uvimage)*noise
-        print("Noise generated")
+        # print("Noise generated")
         return noiseimage.cpu().numpy()
 
 class createsvfromuvimageandtracks:
@@ -101,7 +105,7 @@ class createsvfromuvimageandtracks:
         uvimage = torch.tensor(uvimage, device=device)
         stacked_uv = torch.tensor(stacked_uv, device=device)
         tracked_uv = func.multiply_uvmaps_with_fourier(stacked_uv, uvimage)
-        print("SV generated")
+        # print("SV generated")
         return tracked_uv.cpu().numpy()
 
 class createnvfromsv:
@@ -110,7 +114,7 @@ class createnvfromsv:
         tracked_uv = torch.tensor(tracked_uv, device=device)
         normed_tracked_uv = tracked_uv / Unit_uv()
         normed_tracked_uv = normed_tracked_uv.nan_to_num(nan=0.0)
-        print("NV generated")
+        # print("NV generated")
         return normed_tracked_uv.cpu().numpy()
 
 
@@ -121,7 +125,7 @@ class createsvfromnoiseandtracks:
         noisestacked_uv = torch.tensor(noisestacked_uv, device=device)
         noisestacked_uv = torch.sqrt(noisestacked_uv)
         noisetracked_uv = func.multiply_uvmaps_with_fourier(noisestacked_uv, noiseimage)
-        print("NSV generated")
+        # print("NSV generated")
         return noisetracked_uv.cpu().numpy()
 
 class createnoisenvfromsv:
@@ -130,7 +134,7 @@ class createnoisenvfromsv:
         noisetracked_uv = torch.tensor(noisetracked_uv, device=device)
         noisenormed_tracked_uv = noisetracked_uv / Unit_uv()
         noisenormed_tracked_uv = noisenormed_tracked_uv.nan_to_num(nan=0.0)
-        print("NNV generated")
+        # print("NNV generated")
         return noisenormed_tracked_uv.cpu().numpy()
 
 class createxfromnvandnoisenv:
@@ -143,7 +147,7 @@ class createxfromnvandnoisenv:
         # imag = x.imag      # (B,2,H,W)
         # # Concatenate along channel dimension → (B,4,H,W)
         # x = torch.cat([real, imag], dim=1)
-        print("x generated")
+        # print("x generated")
         return x.cpu().numpy()
 
 class createobsxfromx:
@@ -245,7 +249,7 @@ class E(torch.nn.Module):
         x = x.view(B, N * H * W)  # (B, N*16384)
         # falcon.log({f"{self.log_prefix}output_min": x.min().item()})
         # falcon.log({f"{self.log_prefix}output_max": x.max().item()})
-        print("E(x) generated")
+        # print("E(x) generated")
         return x
 
 # class E(nn.Module):

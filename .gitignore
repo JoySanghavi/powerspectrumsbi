@@ -1,3 +1,4 @@
-outputs
-prioranalysis.ipynb
-priors.yaml
+03_gaincal/outputs
+03_gaincal/prioranalysis.ipynb
+03_gaincal/priors.yaml
+03_gaincal/src/__pycache__
