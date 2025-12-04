@@ -2,8 +2,8 @@
 # WandB logging configuration
 # -----------------------------------------------------------------------------
 logging:
-  project: falcon_gaincal                   # WandB project name
-  group: experiment_000                     # Logical group or experiment name
+  project: falcon_bias                   # WandB project name
+  group: maf_resamples256_200_0.01_res50                          # Logical group or experiment name
   dir: ${hydra:run.dir}                     # Log directory (Hydra's resolved run path)
 # Addcpupertask on terminal command
 # -----------------------------------------------------------------------------
@@ -21,7 +21,7 @@ buffer:
   min_training_samples: 2048            # Minimum samples before training starts
   max_training_samples: 2048            # Maximum number of samples retained in buffer
   validation_window_size: 256           # Size of validation split (for early stopping)
-  resample_batch_size: 0                # Number of new samples drawn per resampling step
+  resample_batch_size: 256              # Number of new samples drawn per resampling step
   keep_resampling: true                 # Continue resampling after reaching max samples
   resample_interval: 10                 # Resample every N training epochs
 
@@ -192,8 +192,8 @@ graph:
     simulator: 
       _target_: falcon.contrib.HypercubeMappingPrior
       priors: 
-      - ['uniform', -4, -2]
-      - ['uniform', -3, -2]
+      - ['uniform', -5, -1]
+      - ['uniform', -4, -1]
     estimator:
       _target_: falcon.contrib.SNPE_A
       embedding:
@@ -205,10 +205,10 @@ graph:
       # log_ratio_threshold: -20          # Stability cutoff for log ratios
       # discard_samples: true
       gamma: 0.5
-      num_epochs: 5
+      num_epochs: 200
       batch_size: 128
       lr: 0.01
-      early_stop_patience: 32
+      early_stop_patience: 24
       lr_decay_factor: 0.1
       scheduler_patience: 16
       # use_log_update: true
@@ -217,7 +217,7 @@ graph:
       # use_best_models_during_inference: true
       # reset_network_after_pause: false
     ray:
-      num_gpus: 0.0
+      num_gpus: 1.0
 
   gains:
     parents: [z]
@@ -301,5 +301,5 @@ sample:
     n: 250
     path: samples_proposal.joblib
   posterior:
-    n: 500                                 # Number of posterior samples to draw
-    path: samples_posteriorxyz.joblib      # Output path for saved samples (under hydra.run.dir)
+    n: 1500                               # Number of posterior samples to draw
+    path: samples_posteriormaf_resamples256_200_0.01_res50.joblib      # Output path for saved samples (under hydra.run.dir)
