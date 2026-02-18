@@ -1,0 +1,111 @@
+# Logging configuration
+logging:
+  wandb:
+    enabled: true
+    project: falcon_vgssolver
+    group: 11VGSsolverSingularValueEmbedding # Updated to 11 antennas
+    dir: ${run_dir}
+  local:
+    enabled: true
+    dir: ${paths.graph}
+
+# Directory configuration
+paths:
+  import: "./src"
+  buffer: ${run_dir}/sim_dir
+  graph: ${run_dir}/graph_dir
+  samples: ${run_dir}/samples_dir
+
+# Training buffer parameters
+buffer:
+  min_training_samples: 8000
+  max_training_samples: 10000
+  validation_window_size: 128 #this was 128
+  resample_batch_size: 32 #this was 32 
+  keep_resampling: true #thiswastrue
+  resample_interval: 5 #this was 5
+  dump:
+    enabled: false
+    path: sample_{step}.joblib
+
+# Graph definition using declarative YAML
+graph:
+  z:
+    evidence: [V]  # Changed from [row] to use full V matrix
+    simulator:
+      _target_: falcon.contrib.HypercubeMappingPrior
+      priors:  # 20 priors for 11 antennas: 2*(n_ant-1) = 2*10 = 20
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+        - ['uniform', -1.0, 1.0]
+    estimator:
+      _target_: falcon.contrib.SNPE_A
+      loop:
+        num_epochs: 100 #thiswas6
+        batch_size: 128
+        early_stop_patience: 32
+        reset_network_after_pause: false
+      network:
+        net_type: maf # nsf, zuko_gf, maf, nice, sospf, naf, gf
+        theta_norm: true
+        embedding:
+          _target_: embeddings.SingularValueEmbedding
+          # stride: 2
+          # max_triplets: 50
+          # device: cuda
+          _input_: [V]  # Changed from [row] to full V matrix
+      optimizer:
+        lr: 0.001
+        lr_decay_factor: 0.5
+        scheduler_patience: 16
+      inference:
+        gamma: 0.5
+        discard_samples: false
+        log_ratio_threshold: -20
+        sample_reference_posterior: false
+        use_best_models_during_inference: true
+    ray:
+      num_gpus: 1.0
+
+
+  G:
+    parents: [z]
+    simulator: 
+      _target_: model.creategainmatrix
+
+  V:
+    parents: [G]
+    simulator:
+      _target_: model.createvfromg
+    observed: "./data/observed11V.npy"  # 11x11 complex matrix for 11 antennas
+
+  # row:
+  #   parents: [V]
+  #   simulator:
+  #     _target_: model.create1strowfromv
+    # observed removed - now using full V matrix above
+
+sample:
+  prior:
+    n: 1000
+  proposal:
+    n: 1000
+  posterior:
+    n: 1000
