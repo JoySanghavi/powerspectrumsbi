@@ -22,18 +22,11 @@ VSGsolver/
 │   └── posterioranalysis.py # Visualize and analyze posterior samples
 ├── data/
 │   ├── observed11V.npy      # Observed V matrix (n_ant x n_ant complex)
-│   ├── observed11row.npy    # Observed first row of V
+│   ├── observed11S.npy      # Observed S
 │   ├── observed11z.npy      # True gain parameters (for validation)
 │   └── observed{N}*.npy     # Other antenna configurations (10, 40)
 └── outputs/                  # Run outputs (gitignored)
-    ├── 11antSingularValueEmbedding/
-    ├── 11antallrws/
-    ├── 11antbispectrum/
-    ├── 11antclosurephase/
-    ├── 11antrowmagnitude/
-    ├── 11antfancy/
-    ├── 10antennae*/
-    └── 40antennae/
+    ├── example
 ```
 
 ## Available Embeddings
@@ -68,13 +61,13 @@ Run `src/modelgen.py` to create the observed `.npy` files. Set `n_ant` in `src/m
 ### 3. Launch training
 
 ```bash
-falcon launch config.yaml
+falcon launch --run-dir outputs/example
 ```
 
 ### 4. Generate posterior samples
 
 ```bash
-falcon samples config.yaml
+falcon sample posterior --run-dir outputs/example
 ```
 
 ### 5. Analyze results
@@ -101,7 +94,7 @@ Everything else is excluded:
 |-----------|--------------|-------|
 | n_ant | 11 | Number of antennas |
 | Priors | 20 x Uniform(-1, 1) | 2*(11-1) gain parameters |
-| Embedding | SingularValueEmbedding | Via V matrix |
+| Embedding | FirstRowEmbedding | Via V matrix |
 | Network | MAF | Masked Autoregressive Flow |
 | Epochs | 100 | With early stopping (patience 32) |
 | Buffer | 8000-10000 samples | Resampling every 5 rounds |
