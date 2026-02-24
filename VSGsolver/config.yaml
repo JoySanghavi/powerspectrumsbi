@@ -1,9 +1,9 @@
 # Logging configuration
 logging:
   wandb:
-    enabled: true
+    enabled: false
     project: falcon_vgssolver
-    group: 11VGSsolverSingularValueEmbedding # Updated to 11 antennas
+    group: 11VGSsolvertest # Updated to 11 antennas
     dir: ${run_dir}
   local:
     enabled: true
@@ -58,7 +58,7 @@ graph:
     estimator:
       _target_: falcon.contrib.SNPE_A
       loop:
-        num_epochs: 100 #thiswas6
+        num_epochs: 10 #thiswas6
         batch_size: 128
         early_stop_patience: 32
         reset_network_after_pause: false

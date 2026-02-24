@@ -79,8 +79,11 @@ class ThetaToDiagonalMatrix:
         # 1. Identify dimensions
         batch_size, two_b_1 = theta.shape
         b_1 = two_b_1 // 2
-        if b_1!=int(self.n_ant-1):
-            print("Size of the class call and input vector does not match.")
+        if b_1 != int(self.n_ant - 1):
+            raise ValueError(
+                f"Input vector size mismatch: expected {int(self.n_ant - 1)} "
+                f"antenna pairs (2*(n_ant-1)/2), got {b_1}."
+            )
         # 2. Reshape into (Batch, b-1, 2) to separate Real and Imaginary parts
 
         theta_view = theta.view(batch_size, b_1, 2)

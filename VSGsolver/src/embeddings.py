@@ -107,7 +107,7 @@ class RowMagnitudeRatiosEmbedding(nn.Module):
 
     Output: Real-valued ratios
     """
-    def __init__(self, eps=1e-10):
+    def __init__(self, eps=1e-6):
         super(RowMagnitudeRatiosEmbedding, self).__init__()
         self.eps = eps
 
@@ -196,16 +196,10 @@ class SingularValueEmbedding(nn.Module):
         Returns:
             torch.Tensor: Real tensor (Batch, n_singular_values)
         """
-        batch_size = V.shape[0]
-        singular_values = []
-
-        for b in range(batch_size):
-            _, S_vals, _ = torch.linalg.svd(V[b])
-            if self.n_singular_values is not None:
-                S_vals = S_vals[:self.n_singular_values]
-            singular_values.append(S_vals)
-
-        return torch.stack(singular_values)
+        _, S_vals, _ = torch.linalg.svd(V)  # (Batch, n_ant, n_ant) -> S_vals: (Batch, n_ant)
+        if self.n_singular_values is not None:
+            S_vals = S_vals[:, :self.n_singular_values]
+        return S_vals
 
 
 class LogAmplitudeEmbedding(nn.Module):
@@ -216,7 +210,7 @@ class LogAmplitudeEmbedding(nn.Module):
 
     Output: Real-valued log amplitudes
     """
-    def __init__(self, eps=1e-10):
+    def __init__(self, eps=1e-6):
         super(LogAmplitudeEmbedding, self).__init__()
         self.eps = eps
 

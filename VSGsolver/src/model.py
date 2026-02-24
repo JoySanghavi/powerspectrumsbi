@@ -14,8 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
 padded_path = DATA_DIR / "observed11S.npy"
 
-padded = torch.tensor(np.load(padded_path))
-S = func.HollowIndefiniteMatrixGenerator(config)()
+S = torch.tensor(np.load(padded_path)).to(device)
 Gcreator = func.ThetaToDiagonalMatrix(config)
 Vcreator = func.GtoV(config)
 Rowcreator = func.VtoRow(config)

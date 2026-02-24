@@ -1,5 +1,29 @@
-03_gaincal/outputs
-03_gaincal/src/__pycache__
-*.joblib
-*.out
-*.sh
+# Ignore everything by default
+*
+
+# Allow the two project folders
+!03_gaincal/
+!VSGsolver/
+
+# Within each project, allow data/, src/, plus yaml/notebook/markdown files
+!03_gaincal/data/
+!03_gaincal/data/**
+!03_gaincal/src/
+!03_gaincal/src/**
+!03_gaincal/*.yaml
+!03_gaincal/*.ipynb
+!03_gaincal/*.md
+
+!VSGsolver/data/
+!VSGsolver/data/**
+!VSGsolver/src/
+!VSGsolver/src/**
+!VSGsolver/*.yaml
+!VSGsolver/*.md
+
+# Still ignore pycache and compiled files everywhere
+__pycache__/
+*.pyc
+
+# Allow root-level gitignore itself
+!.gitignore

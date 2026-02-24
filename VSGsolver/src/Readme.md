@@ -1,6 +1,6 @@
 # VSGsolver - Visibility Gain Solver via SBI
 
-Simulation-Based Inference pipeline for recovering complex antenna gains **G** from visibility matrices **V**, using the [Falcon](https://github.com/) framework with SNPE-A.
+Simulation-Based Inference pipeline for recovering complex antenna gains **G** from visibility matrices **V**, using the [Falcon](https://github.com/cweniger/falcon) framework with SNPE-A.
 
 ## Problem
 
@@ -18,8 +18,8 @@ VSGsolver/
 │   ├── model.py             # Forward model: theta -> G -> V (simulator classes)
 │   ├── functionlistnew.py   # Core math: MatrixConfig, S generator, G/V constructors
 │   ├── embeddings.py        # Neural network embeddings for V (summary statistics)
-│   ├── modelgen.ipynb       # Generate observed data (.npy files)
-│   └── posterior.ipynb      # Visualize and analyze posterior samples
+│   ├── modelgen.py          # Generate observed data (.npy files)
+│   └── posterioranalysis.py # Visualize and analyze posterior samples
 ├── data/
 │   ├── observed11V.npy      # Observed V matrix (n_ant x n_ant complex)
 │   ├── observed11row.npy    # Observed first row of V
@@ -63,7 +63,7 @@ Edit `config.yaml`:
 
 ### 2. Generate observations
 
-Run `src/modelgen.ipynb` to create the observed `.npy` files. Set `n_ant` in `src/model.py` to match. Read the correct `S` file in `src/model.py`
+Run `src/modelgen.py` to create the observed `.npy` files. Set `n_ant` in `src/model.py` to match. Read the correct `S` file in `src/model.py`
 
 ### 3. Launch training
 
@@ -79,7 +79,7 @@ falcon samples config.yaml
 
 ### 5. Analyze results
 
-Run `src/posterior.ipynb` to plot posteriors and compare against true parameters.
+Run `src/posterioranalysis.py` to plot posteriors and compare against true parameters.
 
 ## .gitignore
 
@@ -106,3 +106,11 @@ Everything else is excluded:
 | Epochs | 100 | With early stopping (patience 32) |
 | Buffer | 8000-10000 samples | Resampling every 5 rounds |
 | Learning rate | 0.001 | With 0.5 decay, patience 16 |
+
+## Changelog
+
+### Bug Fixes
+- **`model.py`**: `S` matrix now correctly moved to the active device via `.to(device)` after loading, preventing GPU/CPU tensor mismatch errors.
+- **`modelgen.py`**: All `.numpy()` calls now use `.detach().cpu().numpy()` to safely handle GPU tensors during data generation.
+- **`functionlistnew.py`**: `ThetaToDiagonalMatrix` now raises a `ValueError` (instead of silently printing) when the input vector size does not match `n_ant`.
+- **`embeddings.py`**: Default `eps` in `RowMagnitudeRatiosEmbedding` and `LogAmplitudeEmbedding` raised from `1e-10` to `1e-6` to reduce risk of NaN propagation in edge cases.
