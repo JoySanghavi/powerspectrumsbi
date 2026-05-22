@@ -378,7 +378,7 @@ def generate_hermitian_noise(B, H, W, device):
         torch.Tensor: complex Hermitian noise [B, H, W//2+1]
     """
     import torch
-    torch.manual_seed(42)
+    # torch.manual_seed(42)
     real = torch.randn((B, H, W//2+1), device=device)
     imag = torch.randn((B, H, W//2+1), device=device)
     imag[..., 0] = 0.0

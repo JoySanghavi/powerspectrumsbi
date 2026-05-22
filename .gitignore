@@ -19,6 +19,7 @@
 !VSGsolver/src/
 !VSGsolver/src/**
 !VSGsolver/*.yaml
+!VSGsolver/*.ipynb
 !VSGsolver/*.md
 
 # Still ignore pycache and compiled files everywhere

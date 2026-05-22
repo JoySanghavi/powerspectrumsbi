@@ -14,6 +14,7 @@ padded_path = HERE / "paddedAA2_4_10_9_128.pth"
 padded = torch.load(padded_path)
 subsetindex = func.split_indices(padded.shape[0], 2)
 noise = 0.0
+knownant = 59 #64-1-unknownantennae
 config = func.SimulationConfig(
     shape=128,
     BoxSize=128.0,
@@ -31,6 +32,9 @@ class creategainfromtheta:
     """Gains created based on parameters theta/z."""
     def simulate_batch(self, batch_size, z):
         z = torch.tensor(z, device=device)
+        zeros = torch.zeros(z.size(0), int(knownant*2))
+        # Concatenate along the feature dimension (dim=1)
+        z = torch.cat([z, zeros], dim=1)
         gains = func.thetatogains(z)
         return gains.detach().cpu().numpy()
 
@@ -54,6 +58,8 @@ class createdffrompw:
         pw = torch.tensor(pw, device=device)
         a = torch.pow(10, pw[:,0])
         n = pw[:,1]
+        # a = torch.zeros(pw.size(0))
+        # n = torch.zeros(pw.size(0))
         df = PWSimulator.sample_field(a, n)
         return df.detach().cpu().numpy()
 
@@ -149,7 +155,7 @@ class E(nn.Module):
     """
     Embedding network using a timm CNN encoder with per-slice layer normalization.
     """
-    def __init__(self, backbone='resnet50d', in_chans=4, log_prefix=None):
+    def __init__(self, backbone='resnet18', in_chans=4, log_prefix=None):
         super().__init__()
         self.log_prefix = log_prefix + ":" if log_prefix else ""
 
@@ -174,7 +180,61 @@ class E(nn.Module):
         h = self.encoder(x)                     # (B, feature_dim, 1, 1)
         out = h.flatten(1)                        # (B, feature_dim)
         return out
+# import torch.nn as nn
+# import timm
 
+# class E(nn.Module):
+#     """
+#     Efficient Embedding network using MobileNetV3-Small.
+#     """
+#     def __init__(self, backbone='resnet18', in_chans=4, embedding_dim=64, log_prefix=None):
+#         super().__init__()
+#         self.log_prefix = log_prefix + ":" if log_prefix else ""
+#         # 1. Load Pretrained MobileNetV3
+#         # num_classes=0 removes the final classifier.
+#         # global_pool='' keeps the spatial features initially if we need to process them, 
+#         # but here we let timm handle pooling by default or manually below.
+#         self.encoder = timm.create_model(
+#             backbone, 
+#             pretrained=True, 
+#             in_chans=in_chans, 
+#             num_classes=0  # Returns the feature vector (B, 576)
+#         )
+        
+#         # Optional: Further compression
+#         # If 576 is still too big for your storage, you can project it down (e.g., to 128).
+#         # Set embedding_dim to an integer (e.g., 128) to enable this.
+#         self.projection = None
+#         if embedding_dim:
+#             # Dynamically get the output features of the encoder (usually 576 for mobilenetv3_small)
+#             enc_features = self.encoder.num_features
+#             self.projection = nn.Linear(enc_features, embedding_dim)
+
+#     def forward(self, x, *args):
+#         """
+#         x: (B, C, H, W)
+#         Returns: (B, 576) or (B, embedding_dim)
+#         """
+#         # Ensure input is a tensor and on correct device
+#         if not torch.is_tensor(x):
+#              x = torch.as_tensor(x, dtype=torch.float32)
+#         if x.device != next(self.parameters()).device:
+#             x = x.to(next(self.parameters()).device)
+
+#         # Custom normalization (Your logic)
+#         x = x / 27.0
+
+#         # Pass through encoder
+#         # Output is (B, 576)
+#         features = self.encoder(x)
+
+#         if features.ndim == 4:           # (B, C, H, W)
+#             features = features.mean(dim=[2, 3])   # global avg pool → (B, C)
+
+#         # Optional projection to smaller size
+#         if self.projection:
+#             features = self.projection(features)            
+#         return features
 # class E(torch.nn.Module):
 #     """Embedding network flattening high-dimensional observations per slice with normalization."""
 #     def __init__(self, log_prefix=None):

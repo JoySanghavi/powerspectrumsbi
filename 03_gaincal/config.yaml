@@ -2,8 +2,8 @@
 # WandB logging configuration
 # -----------------------------------------------------------------------------
 logging:
-  project: falcon_bias                   # WandB project name
-  group: maf_resamples256_200_0.01_res50                          # Logical group or experiment name
+  project: falcon_ant_only                   # WandB project name
+  group: maf_resamples256_200_0.01_res18_4ant                        # Logical group or experiment name
   dir: ${hydra:run.dir}                     # Log directory (Hydra's resolved run path)
 # Addcpupertask on terminal command
 # -----------------------------------------------------------------------------
@@ -18,182 +18,31 @@ paths:
 # Training buffer parameters
 # -----------------------------------------------------------------------------
 buffer:
-  min_training_samples: 2048            # Minimum samples before training starts
-  max_training_samples: 2048            # Maximum number of samples retained in buffer
+  min_training_samples: 20048            # Minimum samples before training starts
+  max_training_samples: 20048            # Maximum number of samples retained in buffer
   validation_window_size: 256           # Size of validation split (for early stopping)
-  resample_batch_size: 256              # Number of new samples drawn per resampling step
+  resample_batch_size: 0                # Number of new samples drawn per resampling step
   keep_resampling: true                 # Continue resampling after reaching max samples
-  resample_interval: 10                 # Resample every N training epochs
+  resample_interval: 5                 # Resample every N training epochs
 
 # -----------------------------------------------------------------------------
 # Graph definition using declarative YAML
 # -----------------------------------------------------------------------------
 graph:
   z:
-    # evidence: [obsx]
-    parents: []
-    simulator: 
-      _target_: falcon.contrib.HypercubeMappingPrior
-      priors:
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-      - [uniform, -0.0001, 0.0001]
-    # estimator:
-    #   _target_: falcon.contrib.SNPE_A
-    #   embedding:
-    #     _target_: model.E
-    #     _input_: [obsx]
-    #   net_type: zuko_gf                   # zuko_gf, nice, sospf, maf, gf
-    #   # theta_norm = true
-    #   # norm_momentum: 0.003
-    #   # log_ratio_threshold: -20          # Stability cutoff for log ratios
-    #   # discard_samples: true
-    #   gamma: 0.5
-    #   num_epochs: 50
-    #   batch_size: 128
-    #   lr: 0.01
-    #   early_stop_patience: 32
-    #   lr_decay_factor: 0.1
-    #   scheduler_patience: 16
-    #   # use_log_update: true
-    #   # adaptive_momentum: false
-    #   # sample_reference_posterior: false
-    #   # use_best_models_during_inference: true
-    #   # reset_network_after_pause: false
-    # ray:
-    #   num_gpus: 1.0
-
-  pw:
     evidence: [obsx]
     parents: []
     simulator: 
       _target_: falcon.contrib.HypercubeMappingPrior
-      priors: 
-      - ['uniform', -5, -1]
-      - ['uniform', -4, -1]
+      priors:
+      - [uniform, -1, 1]
+      - [uniform, -1, 1]
+      - [uniform, -1, 1]
+      - [uniform, -1, 1]
+      - [uniform, -1, 1]
+      - [uniform, -1, 1]
+      - [uniform, -1, 1]
+      - [uniform, -1, 1]
     estimator:
       _target_: falcon.contrib.SNPE_A
       embedding:
@@ -205,7 +54,7 @@ graph:
       # log_ratio_threshold: -20          # Stability cutoff for log ratios
       # discard_samples: true
       gamma: 0.5
-      num_epochs: 200
+      num_epochs: 100
       batch_size: 128
       lr: 0.01
       early_stop_patience: 24
@@ -218,6 +67,39 @@ graph:
       # reset_network_after_pause: false
     ray:
       num_gpus: 1.0
+
+  pw:
+    # evidence: [obsx]
+    parents: []
+    simulator: 
+      _target_: falcon.contrib.HypercubeMappingPrior
+      priors: 
+      - ['uniform', -5, -2]
+      - ['uniform', -5, -2]
+    # estimator:
+    #   _target_: falcon.contrib.SNPE_A
+    #   embedding:
+    #     _target_: model.E
+    #     _input_: [obsx]
+    #   net_type: maf                   # zuko_gf, nice, sospf, maf, gf
+    #   # theta_norm = true
+    #   # norm_momentum: 0.003
+    #   # log_ratio_threshold: -20          # Stability cutoff for log ratios
+    #   # discard_samples: true
+    #   gamma: 0.5
+    #   num_epochs: 200
+    #   batch_size: 128
+    #   lr: 0.01
+    #   early_stop_patience: 24
+    #   lr_decay_factor: 0.1
+    #   scheduler_patience: 16
+    #   # use_log_update: true
+    #   # adaptive_momentum: false
+    #   # sample_reference_posterior: false
+    #   # use_best_models_during_inference: true
+    #   # reset_network_after_pause: false
+    # ray:
+    #   num_gpus: 0.5
 
   gains:
     parents: [z]
@@ -288,7 +170,7 @@ graph:
     parents: [x]
     simulator:
       _target_: model.createobsxfromx
-    observed: "data/normed_tracked_uvobs.npy"
+    observed: "data/normed_tracked_uvobs-4ant.npy"
 
 # -----------------------------------------------------------------------------
 # Sampling configuration (posterior draws after training)
@@ -302,4 +184,4 @@ sample:
     path: samples_proposal.joblib
   posterior:
     n: 1500                               # Number of posterior samples to draw
-    path: samples_posteriormaf_resamples256_200_0.01_res50.joblib      # Output path for saved samples (under hydra.run.dir)
+    path: samples_posteriormaf_resamples256_200_0.01_res18_4ant.joblib      # Output path for saved samples (under hydra.run.dir)
